@@ -1,0 +1,47 @@
+
+
+
+
+logging:
+  level:
+    com.heimaoedu: debug
+
+aliyun:
+  oss:
+    accessKeyId: LTAI4FjWumKutv5c9SWTwZ9i
+    accessKeySecret: kCD6X9EePO4fEZLXSBQi8tbLPd5Nfu
+    yourBucketName: edu-test123
+    endpoint: oss-cn-beijing.aliyuncs.com
+    address: https://edu-test123.oss-cn-beijing.aliyuncs.com
+
+
+tencent:
+   video:
+     secretId: AKIDMWS8ZUzn57ybz8k9sOfjX6PcjbEbegLk
+     secretKey: SpxqUv7AykSzJOGtHSbbMr6A2f2OksmQ
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:9099/eureka
+    register-with-eureka: true
+    fetch-registry: true
+spring:
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+  application:
+    name: heimao-cloud
+
+  rabbitmq:
+    addresses: 127.0.0.1
+    virtual-host: wangeqiu
+    username: wangeqiu
+    password: wangeqiu
+
+server:
+  port: 8117
+profiles:
+  active: dev
+

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="lecturer-server" />
+        <module name="course-api" />
+        <module name="lecturer-api" />
+        <module name="cloud-server" />
+        <module name="user-server" />
+        <module name="statistics-server" />
+        <module name="gateway-air" />
+        <module name="order-server" />
+        <module name="sms-server" />
+        <module name="course-server" />
+        <module name="common-air" />
+        <module name="cloud-api" />
+        <module name="register-air" />
+        <module name="user-api" />
+        <module name="order-api" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="cloud-air" options="-parameters" />
+      <module name="cloud-api" options="-parameters" />
+      <module name="cloud-server" options="-parameters" />
+      <module name="common-air" options="-parameters" />
+      <module name="course-air" options="" />
+      <module name="course-api" options="-parameters" />
+      <module name="course-server" options="-parameters" />
+      <module name="gateway-air" options="-parameters" />
+      <module name="lecturer-air" options="-parameters" />
+      <module name="lecturer-api" options="-parameters" />
+      <module name="lecturer-server" options="-parameters" />
+      <module name="order-air" options="-parameters" />
+      <module name="order-api" options="-parameters" />
+      <module name="order-server" options="-parameters" />
+      <module name="register-air" options="-parameters" />
+      <module name="sms-air" options="-parameters" />
+      <module name="sms-server" options="-parameters" />
+      <module name="statistics-air" options="-parameters" />
+      <module name="statistics-server" options="-parameters" />
+      <module name="user-air" options="-parameters" />
+      <module name="user-api" options="-parameters" />
+      <module name="user-server" options="-parameters" />
+    </option>
+  </component>
+</project>

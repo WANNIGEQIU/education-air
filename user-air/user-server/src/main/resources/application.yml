@@ -1,0 +1,48 @@
+server:
+  port: 8996
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/education?characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: 12345
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: 129.211.40.9
+  # 环境
+  profiles:
+    active: dev
+
+  application:
+    name: heimao-user
+
+  rabbitmq:
+    addresses: 127.0.0.1
+    virtual-host: wangeqiu
+    username: wangeqiu
+    password: wangeqiu
+
+  #返回json时间格式 全局
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:/mapper/*.xml
+logging:
+  level:
+    com.heimaoedu: debug
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:9099/eureka
+    fetch-registry: true
+    register-with-eureka: true
+ribbon:
+  restclient:
+    enabled: true
+  ReadTimeout: 10000
+  ConnectTimeout: 10000

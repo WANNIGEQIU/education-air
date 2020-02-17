@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.air.server.course.mapper.EduCourseMapper">
+	<insert id="addUcourse" parameterType="map">
+
+		INSERT INTO edu_ucourse (id,course_id, username )
+VALUES
+	(#{id},#{courseId},#{username})
+	</insert>
+
+	<select id="getCourseInfo" resultType="com.air.server.course.entity.dto.CourseInfoDto" parameterType="string">
+
+                SELECT
+	a.id,
+	a.lecturer_id,
+	a.category_id,
+	a.title,
+	a.price,
+	a.lesson_num,
+	a.cover,
+	a.category_pid,
+	b.id bid,
+	b.description
+FROM
+	edu_course a
+	INNER JOIN edu_course_description b ON a.id = b.id and a.id = #{id}
+
+
+
+    </select>
+
+	<sql id="queryall">
+		a.id,
+	a.lecturer_id,
+	a.category_id,
+	a.title,
+	a.price,
+	a.lesson_num,
+	a.cover,
+	a.category_pid,
+	a.buy_count,
+	a.view_count,
+	a.status,
+	a.edu_create,
+	a.edu_modified,
+	b.id bid,
+	b.description
+	</sql>
+
+    <select id="selectCondtion" resultType="com.air.server.course.entity.dto.CourseCondtionDto" parameterType="com.air.server.course.entity.dto.CourseInfoDto">
+
+		SELECT
+		<include refid="queryall"/>
+FROM
+	edu_course a
+	LEFT JOIN edu_course_description b ON a.id = b.id
+
+	</select>
+	<select id="queryInfo" resultType="com.air.server.course.entity.dto.CourseInfoDto">
+		SELECT
+	c.id,
+	c.title,
+	let.NAME AS lecturerName,
+	let.id AS lecturerId,
+	let.career AS career,
+	let.intro AS intro,
+	let.head ,
+	let.level,
+	c.buy_count AS buyCount,
+	c.view_Count AS viewCount,
+	c.cover,
+	c.status,
+	CONVERT ( c.price, DECIMAL ( 8, 2 ) ) AS price,
+	c.lesson_num,
+	des.description,
+	sub.title AS oneCategory,
+	su.title AS twoCategory
+FROM
+	edu_course c
+	INNER JOIN edu_course_description des ON c.id = des.id
+	LEFT JOIN edu_lecturer let ON c.lecturer_id = let.id
+	LEFT JOIN edu_subject sub ON c.category_pid = sub.id
+	LEFT JOIN edu_subject su ON c.category_id = su.id
+WHERE
+	c.id = #{id}
+
+	</select>
+    <select id="selectCourse8Lid" resultType="com.air.common.vo.CourseVo">
+	SELECT
+	c.id,
+	c.lecturer_id,
+	c.category_id,
+	c.category_pid,
+	c.title,
+	CONVERT ( c.price, DECIMAL ( 8, 2 ) ) AS price,
+	c.lesson_num,
+	c.cover,
+	c.buy_count,
+	c.view_count,
+	c.status ,
+	d.description
+FROM
+	edu_course c
+	INNER JOIN edu_course_description d
+WHERE
+	c.id = d.id
+	AND c.lecturer_id = #{id}
+	AND c.status = "Publish"
+
+	</select>
+	<select id="queryPopularCourse" resultType="com.air.server.course.entity.EduCourse">
+		SELECT
+	*
+FROM
+	edu_course
+	WHERE status = 'Publish'
+ORDER BY
+	view_count DESC
+	LIMIT 0,
+	8
+	</select>
+    <select id="userIsBuy" resultType="java.lang.Integer">
+		SELECT
+	count( * )
+FROM
+	edu_ucourse
+WHERE
+	course_id = #{param1}
+	AND  username= #{param2}
+	</select>
+    <select id="getMyCourse1" resultType="com.air.server.course.entity.EduUcourse">
+
+		SELECT
+	id,username,course_id
+FROM
+	edu_ucourse
+where username = #{username}
+
+	</select>
+    <select id="queryCourse" resultType="java.lang.Integer">
+	SELECT
+	sum( buy_count )
+FROM
+	edu_course
+WHERE
+	DATE( edu_create ) = #{day}
+	</select>
+</mapper>

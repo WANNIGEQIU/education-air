@@ -1,0 +1,28 @@
+spring:
+  rabbitmq:
+    addresses: 127.0.0.1
+    virtual-host: wangeqiu
+    username: wangeqiu
+    password: wangeqiu
+  application:
+    name: sms-air
+heimao:
+  message:
+    accessKeyId: LTAI4FjWumKutv5c9SWTwZ9i
+    accessKeySecret: kCD6X9EePO4fEZLXSBQi8tbLPd5Nfu
+    signName: 黑猫教育                  #短信名称
+    messageTemplate: SMS_182684378    #短信模板
+
+server:
+  port: 7763
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:9099/eureka
+    fetch-registry: true
+    register-with-eureka: true
+    ribbon:
+      eureka:
+        enabled: true
