@@ -45,7 +45,9 @@ public enum ResultEnum {
     USER_IS_EXIST(1231,"用户已存在,请登录"),
     USER_NOT_EXIST(1321,"用户不存在 请注册"),
     USER_IS_PROHIBIT(3328,"账号已被禁止使用"),
-    USER_PHONE_ISEXIST(78323,"该手机号已注册请登录")
+    USER_PHONE_ISEXIST(78323,"该手机号已注册请登录"),
+    VERFYICODE_IS_ERROR(3239,"验证码不正确"),
+    VERFYRCODE_IS_NULL(3249,"验证码为null")
 
     ;
 

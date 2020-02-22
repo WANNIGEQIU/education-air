@@ -7,7 +7,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @FeignClient("heimao-course")
-public interface CourseFeignClient  extends CourseApi {
+public interface CourseFeign extends CourseApi {
+
 
 
 

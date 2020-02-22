@@ -6,10 +6,7 @@ import com.air.common.exception.MyException;
 import com.air.common.util.SnowFlake;
 import com.air.common.vo.CourseVo;
 import com.air.server.course.entity.*;
-import com.air.server.course.entity.dto.ChapterDto;
-import com.air.server.course.entity.dto.CourseCondtionDto;
-import com.air.server.course.entity.dto.CourseInfoDto;
-import com.air.server.course.entity.dto.VideoDto;
+import com.air.server.course.entity.dto.*;
 import com.air.server.course.exception.CourseException;
 import com.air.server.course.mapper.*;
 import com.air.server.course.service.EduChapterService;
@@ -232,19 +229,17 @@ public class EduCourseServiceImpl implements EduCourseService {
 
     // web 获取课程信息
     @Override
-    public Map getCourseList(Page<EduCourse> p) {
+    public Page getCourseList(Page<EduCourse> p,CourseVo bean) {
+
         QueryWrapper<EduCourse> wrapper = new QueryWrapper<>();
         wrapper.eq("status","Publish");
+        wrapper.orderByDesc("edu_create");
+        if (!(StringUtils.isEmpty(bean.getCategoryPid()))) {
+            wrapper.eq("category_pid",bean.getCategoryPid());
+        }
         Page<EduCourse> coursePage = courseMapper.selectPage(p, wrapper);
-        Map<String, Object> hashMap = new HashMap<>();
-          hashMap.put("records",coursePage.getRecords());
-          hashMap.put("total",coursePage.getTotal());
-          hashMap.put("size",coursePage.getSize());
-          hashMap.put("pages",coursePage.getPages());
-          hashMap.put("current",coursePage.getCurrent());
-          hashMap.put("previous",coursePage.hasPrevious());
-          hashMap.put("next",coursePage.hasNext());
-        return hashMap;
+
+        return coursePage;
     }
 
     @Override
@@ -419,6 +414,35 @@ public class EduCourseServiceImpl implements EduCourseService {
 
         Integer integer = this.courseMapper.queryCourse(day);
         return integer;
+    }
+
+    @Override
+    public  List<TwoSubjectDto> getSecondListByFirsrId(String firstId) {
+        List<TwoSubjectDto> list = new ArrayList<>();
+        QueryWrapper<EduSubject> wrapper = new QueryWrapper<>();
+        wrapper.eq("parent_id",firstId);
+        List<EduSubject> category = this.categoryMapper.selectList(wrapper);
+        category.forEach(x->{
+            TwoSubjectDto two = new TwoSubjectDto();
+            two.setId(x.getId());
+            two.setTitle(x.getTitle());
+            list.add(two);
+
+        });
+
+        return list;
+    }
+
+    @Override
+    public CourseVo getcourse(String cid) {
+        CourseVo courseVo = new CourseVo();
+        EduCourse eduCourse = this.courseMapper.selectById(cid);
+         if (eduCourse !=null) {
+
+             BeanUtils.copyProperties(eduCourse,courseVo);
+         }
+
+        return courseVo;
     }
 
 

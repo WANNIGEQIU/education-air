@@ -21,7 +21,10 @@ import java.util.Map;
 public class SmsListener {
 
 
-
+    /**
+     * 注册发短信
+     * @param map
+     */
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(value = "smsQueue",durable = "true"),
            exchange = @Exchange(value = "heimaoSms",ignoreDeclarationExceptions = "true",
@@ -30,19 +33,40 @@ public class SmsListener {
     ))
 
     public void sendMessage(Map<String,String> map) {
-        if (CollectionUtils.isEmpty(map)) {
-            return;
-        }
-        String mobile = map.get("mobile");
-        String verifyCode = map.get("verifyCode");
-       log.info("短信服务 ---> 消费: {},{}",mobile,verifyCode);
-       if (StringUtils.isEmpty(mobile) || StringUtils.isEmpty(verifyCode)) {
-           throw new SmsException(ResultEnum.PARAM_ERROR);
-       }
-        SendSms.sendSms(mobile, verifyCode);
-
+        judgeMap(map);
 
     }
+
+    /**
+     * 忘记密码发短信
+     */
+
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(value = "LOSS",durable = "true"),
+            exchange = @Exchange(value = "loss",ignoreDeclarationExceptions = "true",
+                    type = ExchangeTypes.TOPIC),
+            key = {"loss"}
+    ))
+    public void lossPassword(Map<String,String> map) {
+        judgeMap(map);
+
+    }
+
+
+
+
+    private void judgeMap(Map<String, String> map) {
+        if (CollectionUtils.isEmpty(map))
+            return;
+        String mobile = map.get("mobile");
+        String verifyCode = map.get("verifyCode");
+        log.info("短信服务 ---> 消费: {},{}",mobile,verifyCode);
+        if (StringUtils.isEmpty(mobile) || StringUtils.isEmpty(verifyCode)) {
+            throw new SmsException(ResultEnum.PARAM_ERROR);
+        }
+        SendSms.sendSms(mobile, verifyCode);
+    }
+
 
 }
 

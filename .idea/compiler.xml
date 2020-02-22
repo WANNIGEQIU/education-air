@@ -16,10 +16,10 @@
         <module name="order-server" />
         <module name="sms-server" />
         <module name="course-server" />
-        <module name="common-air" />
         <module name="cloud-api" />
         <module name="register-air" />
         <module name="user-api" />
+        <module name="common-air" />
         <module name="order-api" />
       </profile>
     </annotationProcessing>

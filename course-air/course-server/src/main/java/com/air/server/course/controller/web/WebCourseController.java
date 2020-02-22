@@ -2,7 +2,9 @@ package com.air.server.course.controller.web;
 
 import com.air.common.ResultCommon;
 import com.air.common.enums.ResultEnum;
+import com.air.common.vo.CourseVo;
 import com.air.server.course.entity.EduCourse;
+import com.air.server.course.entity.dto.TwoSubjectDto;
 import com.air.server.course.entity.dto.VideoDto;
 import com.air.server.course.exception.CourseException;
 import com.air.server.course.service.EduCategoryService;
@@ -11,10 +13,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -35,11 +34,12 @@ public class WebCourseController {
      * @param limit
      * @return
      */
-    @GetMapping("/{page}/{limit}")
+    @PostMapping("/{page}/{limit}")
     public ResultCommon getCourseList(
-            @PathVariable Long page,@PathVariable Long limit) {
+            @PathVariable Long page, @PathVariable Long limit,
+            @RequestBody(required = false) CourseVo bean) {
         Page<EduCourse> p = new Page<>(page, limit);
-        Map courseList = courseService.getCourseList(p);
+        Page courseList = courseService.getCourseList(p,bean);
         return ResultCommon.resultOk(courseList);
 
     }
@@ -153,6 +153,26 @@ public class WebCourseController {
             return ResultCommon.resultOk(myCourse);
         }
 
+    }
+
+    /**
+     * 根据一级类别获取二级类别
+     * @param firstId
+     * @return
+     */
+    @GetMapping("/category/{firstId}")
+    public ResultCommon getSecondListByFirsrId(@PathVariable String firstId) {
+        List<TwoSubjectDto> list = this.courseService.getSecondListByFirsrId(firstId);
+        return ResultCommon.resultOk(list);
+    }
+
+    /**
+     * 获取课程
+     */
+    @GetMapping("/getcourse/{cid}")
+    public ResultCommon getcourse(@PathVariable String cid) {
+        CourseVo getcourse = this.courseService.getcourse(cid);
+        return ResultCommon.resultOk(getcourse);
     }
 
 

@@ -44,8 +44,8 @@ public class OrderDto {
     @ApiModelProperty(value = "课程名字")
     private String courseName;
 
-    @ApiModelProperty(value = "课程金额")
-    private BigDecimal courseAmount;
+//    @ApiModelProperty(value = "课程金额")
+//    private BigDecimal courseAmount;
 
     @ApiModelProperty(value = "优惠金额")
     @TableField("Preferential_amount")

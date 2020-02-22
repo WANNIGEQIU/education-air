@@ -52,7 +52,7 @@ public class EduOrderController {
     /**
      * 支付回调 更新支付状态
      */
-    @PostMapping("/payok")
+    @PostMapping("/pay")
     public ResultCommon paySuccess(PayAsyncVo payAsyncVo) {
 
         Integer integer = this.orderService.paySuccess(payAsyncVo);
@@ -62,6 +62,8 @@ public class EduOrderController {
             return ResultCommon.resultFail(integer);
         }
     }
+
+
 
     /**
      * 我的订单

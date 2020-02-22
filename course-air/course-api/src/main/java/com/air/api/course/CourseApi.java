@@ -24,10 +24,12 @@ public interface CourseApi {
      * @param courseId username
      * @retrurn true ok
      */
-    @PostMapping("/course/adduc/{courseId}/{username}")
-     Boolean  addUcourse(@PathVariable("courseId") String courseId,
-                         @PathVariable("username") String username);
+    @PostMapping("/course/save/{courseId}/{username}")
+     Boolean addUn(@PathVariable("courseId") String courseId,
+                   @PathVariable("username") String username);
 
+    @PostMapping("/course/aa/{aa}")
+     Integer aa(@PathVariable("aa") String aa);
 
     @GetMapping("/course/courseNum/{day}")
      Integer queryCourse(@PathVariable("day") String day);

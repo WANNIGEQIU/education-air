@@ -37,8 +37,8 @@ public class EduCourseFeign {
      * @param courseId username
      * @retrurn true ok
      */
-    @PostMapping("/adduc/{courseId}/{username}")
-    public Boolean  addUcourse(@PathVariable String courseId,@PathVariable String username) {
+    @PostMapping("/save/{courseId}/{username}")
+    public Boolean addUn(@PathVariable String courseId, @PathVariable String username) {
         if (StringUtils.isEmpty(courseId) && StringUtils.isEmpty(username)) {
             throw new CourseException(ResultEnum.PARAM_ERROR);
         }
@@ -48,6 +48,14 @@ public class EduCourseFeign {
             return result;
         }else {
             return !result;
+        }
+    }
+    @PostMapping("/aa/{aa}")
+    public Integer aa(@PathVariable("aa") String aa) {
+        if (aa.equals("tom")) {
+            return 1;
+        }else {
+            return 0;
         }
     }
 

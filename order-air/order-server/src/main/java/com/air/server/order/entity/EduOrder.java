@@ -68,8 +68,8 @@ public class EduOrder implements Serializable {
     private String courseId;
 
 
-    @ApiModelProperty(value = "课程金额")
-    private BigDecimal courseAmount;
+//    @ApiModelProperty(value = "课程金额")
+//    private BigDecimal courseAmount;
 
     @ApiModelProperty(value = "优惠金额")
     @TableField("Preferential_amount")

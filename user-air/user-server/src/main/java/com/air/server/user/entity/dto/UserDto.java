@@ -21,6 +21,9 @@ public class UserDto  {
     @ApiModelProperty(value = "密码")
     private String password;
 
+    @ApiModelProperty(value = "确认密码")
+    private String checkPassword;
+
     @ApiModelProperty(value = "账户名")
     private String username;
 
@@ -33,6 +36,7 @@ public class UserDto  {
     @ApiModelProperty(value = "用户头像")
     private String avatar;
 
+    private String verifyCode;
 
 
     @ApiModelProperty(value = "禁用状态 0 (false) 未禁用 1 禁用 ")

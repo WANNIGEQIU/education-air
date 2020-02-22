@@ -108,12 +108,12 @@ public class EduUserServiceImpl  implements EduUserService {
 
     @Override
 
-    public int UserRegister(EduUser eduUser, String verifyCode) {
+    public int UserRegister(UserDto eduUser, String verifyCode) {
 
         // 获取redis 存的验证码 key (user + mobile)
         String code = this.redisTemplate.opsForValue().get("user" + eduUser.getMobile());
         if ((verifyCode.equals(code)) == false ) {
-            return 0;
+            throw new UserException(ResultEnum.VERFYICODE_IS_ERROR);
         }
         // 是否存在用户
         QueryWrapper<EduUser> queryWrapper = new QueryWrapper<>();
@@ -128,16 +128,18 @@ public class EduUserServiceImpl  implements EduUserService {
         if (eduUser1 != null) {
                 throw new UserException(ResultEnum.USER_PHONE_ISEXIST);
             }
+        EduUser user = new EduUser();
+        BeanUtils.copyProperties(eduUser,user);
 
 
         log.info("用户账号密码: {},{}",eduUser.getUsername(),eduUser.getPassword());
         // 获取盐
         String salt = MD5Utils.saltRandom();
-        eduUser.setSalt(salt);
+        user.setSalt(salt);
         // 密码加密
         String md5Password = MD5Utils.MD5EncodeUtf8(eduUser.getPassword(), salt);
-        eduUser.setPassword(md5Password);
-        int insert = this.userMapper.insert(eduUser);
+        user.setPassword(md5Password);
+        int insert = this.userMapper.insert(user);
         // 获取插入的id
         return insert > 0 ? insert : 0;
 
@@ -199,7 +201,8 @@ public class EduUserServiceImpl  implements EduUserService {
     }
 
     @Override
-    public String userLogin(String account, String password) {
+    public Map userLogin(String account, String password) {
+        Map<String, Object> map = new HashMap<>();
         // true 手机号登录
         if (isInteger(account)) {
             QueryWrapper<EduUser> wrapper = new QueryWrapper<>();
@@ -215,7 +218,10 @@ public class EduUserServiceImpl  implements EduUserService {
                 if (MD5Utils.MD5EncodeUtf8(password,salt).equals(eduUser.getPassword())) {
                     // 生成令牌
                     String tokenSecret = JwtUtil.getTokenSecret(eduUser);
-                    return tokenSecret;
+                    map.put("token",tokenSecret);
+                    map.put("username",eduUser.getUsername());
+                    map.put("phone",eduUser.getMobile());
+                    return map;
                 }else {
                     throw new UserException(ResultEnum.USER_EROR_LOGIN);
                 }
@@ -235,7 +241,11 @@ public class EduUserServiceImpl  implements EduUserService {
             }else {
                 String salt = eduUser.getSalt();
                 if (MD5Utils.MD5EncodeUtf8(password,salt).equals(eduUser.getPassword())) {
-                    return JwtUtil.getTokenSecret(eduUser);
+                    String tokenSecret = JwtUtil.getTokenSecret(eduUser);
+                    map.put("token",tokenSecret);
+                    map.put("username",eduUser.getUsername());
+                    map.put("phone",eduUser.getMobile());
+                    return map;
                 }else {
                     throw new UserException(ResultEnum.USER_EROR_LOGIN);
                 }
@@ -344,7 +354,65 @@ public class EduUserServiceImpl  implements EduUserService {
 
     }
 
+    @Override
+    public void lossCode(String mobile) {
+        //此手机号是否注册
+        QueryWrapper<EduUser> wrapper = new QueryWrapper<>();
+        wrapper.eq("mobile",mobile);
+        wrapper.eq("prohibit",0);
+        Integer integer = this.userMapper.selectCount(wrapper);
+        if (integer == 0) {
+            throw new UserException(9833,"该手机号没有注册，请注册");
+        }
+        //验证码
+        String verifyCode = VerifyCodeUtils.getVerifyCode();
+        //发送mq
+        Map<String, Object> hashMap = new HashMap<>();
+        hashMap.put("mobile",mobile);
+        hashMap.put("verifyCode",verifyCode);
+        this.rabbitTemplate.convertAndSend("loss","loss",hashMap);
 
+        //验证码存入redis
+        this.redisTemplate.opsForValue().set("loss"+mobile,verifyCode,5,TimeUnit.MINUTES);
+
+
+    }
+
+    @Override
+    public Integer lossPassword1(UserDto dto) {
+
+        String code = this.redisTemplate.opsForValue().get("loss" + dto.getMobile());
+            if (StringUtils.isEmpty(code)) {
+                throw new  UserException(ResultEnum.VERFYRCODE_IS_NULL);
+            }
+            if (code.equals(dto.getVerifyCode())) {
+                return 1;
+            }else {
+
+                throw new UserException(ResultEnum.VERFYICODE_IS_ERROR);
+            }
+
+
+
+    }
+
+    @Override
+    public boolean lossPassword2(String s1, String s2,String s3) {
+        if (s1.equals(s2)) {
+            EduUser user = new EduUser();
+            QueryWrapper<EduUser> wrapper = new QueryWrapper<>();
+            wrapper.eq("mobile",s3);
+            String salt = MD5Utils.saltRandom();
+            String password = MD5Utils.MD5EncodeUtf8(s1, salt);
+            user.setSalt(salt);
+            user.setPassword(password);
+            int update = this.userMapper.update(user, wrapper);
+            return update > 0 ?true: false;
+        }else {
+            throw new UserException(9820,"两次输入的密码不一致");
+        }
+
+    }
 
 
     /*

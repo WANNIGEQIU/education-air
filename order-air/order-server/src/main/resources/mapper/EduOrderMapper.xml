@@ -21,7 +21,8 @@
 SET order_status = #{order_status},
 pay_status = #{pay_status},
 pay_time = #{pay_time},
-zfb_no = #{zfb_no}
+zfb_no = #{zfb_no},
+pay_money = #{pay_money}
 WHERE
 	did = 0
 	AND id = #{order_no}

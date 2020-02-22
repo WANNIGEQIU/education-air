@@ -60,6 +60,7 @@ FROM
 		SELECT
 	c.id,
 	c.title,
+	c.category_pid,
 	let.NAME AS lecturerName,
 	let.id AS lecturerId,
 	let.career AS career,

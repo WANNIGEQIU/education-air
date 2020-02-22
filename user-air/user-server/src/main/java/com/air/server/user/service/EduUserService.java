@@ -5,6 +5,8 @@ import com.air.server.user.entity.EduUser;
 import com.air.server.user.entity.dto.UserDto;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import java.util.Map;
+
 /**
  * <p>
  *  服务类
@@ -22,11 +24,11 @@ public interface EduUserService  {
 
     void sendVerifyCode(String mobile);
 
-    int UserRegister(EduUser eduUser, String verifyCode);
+    int UserRegister(UserDto eduUser, String verifyCode);
 
     EduUser queryUserIsexist(String account, String password);
 
-    String userLogin(String account, String password);
+    Map userLogin(String account, String password);
 
     String checkToken(String token);
 
@@ -44,4 +46,9 @@ public interface EduUserService  {
 
     Integer updatePoints(String username, String amount);
 
+    void lossCode(String mobile);
+
+    Integer lossPassword1(UserDto dto);
+
+    boolean lossPassword2(String s1 ,String s2,String s3);
 }

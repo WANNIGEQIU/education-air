@@ -4,6 +4,7 @@ package com.air.server.course.service;
 import com.air.common.vo.CourseVo;
 import com.air.server.course.entity.EduCourse;
 import com.air.server.course.entity.dto.CourseInfoDto;
+import com.air.server.course.entity.dto.TwoSubjectDto;
 import com.air.server.course.entity.dto.VideoDto;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
@@ -45,7 +46,7 @@ public interface EduCourseService  {
 
     Boolean changeStatus(String id, String status);
 
-    Map getCourseList(Page<EduCourse> p);
+    Page getCourseList(Page<EduCourse> p,CourseVo bean);
 
     Map getCourseDetails(String id);
 
@@ -66,5 +67,9 @@ public interface EduCourseService  {
     List getMyCourse(String username);
 
     Integer queryCourse(String day);
+
+   List<TwoSubjectDto> getSecondListByFirsrId(String firstId);
+
+    CourseVo getcourse(String cid);
 }
 

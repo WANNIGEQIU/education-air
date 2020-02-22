@@ -2,7 +2,7 @@ package com.air.server.order.service.impl;
 
 import com.air.common.enums.ResultEnum;
 import com.air.common.util.LocalDateTimeUtils;
-import com.air.server.order.client.CourseFeignClient;
+import com.air.server.order.client.CourseFeign;
 import com.air.server.order.client.UserFeignClient;
 import com.air.server.order.config.AliPayTemplate;
 import com.air.server.order.entity.EduOrder;
@@ -20,8 +20,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
@@ -44,7 +44,7 @@ public class EduOrderServiceImpl implements EduOrderService {
     private AliPayTemplate aliPayTemplate;
 
     @Autowired
-    private CourseFeignClient courseFeignClient;
+    private CourseFeign  courseFeign;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -53,18 +53,26 @@ public class EduOrderServiceImpl implements EduOrderService {
     private UserFeignClient userFeignClient;
 
 
+
+
     @Override
     public String saveOrder(OrderDto order) {
         EduOrder eduOrder = new EduOrder();
         BeanUtils.copyProperties(order, eduOrder);
-        eduOrder.setTotalAmount(order.getCourseAmount());
+        //线上支付
+         eduOrder.setPayType(0);
+         //订单状态 未完成
         eduOrder.setOrderStatus(0);
+        // 支付状态 未支付
         eduOrder.setPayStatus(0);
+        //订单来源 web
         eduOrder.setSourceType(0);
+        // 优惠金额
+        eduOrder.setPreferentialAmount(BigDecimal.valueOf(0));
         int insert = this.orderMapper.insert(eduOrder);
         PayVo payVo = new PayVo();
         payVo.setOut_trade_no(eduOrder.getId());
-        payVo.setTotal_amount(eduOrder.getPayMoney().toString());
+        payVo.setTotal_amount(eduOrder.getTotalAmount().toString());
         payVo.setSubject(eduOrder.getCourseName());
         try {
             String pay = this.aliPayTemplate.pay(payVo);
@@ -80,7 +88,6 @@ public class EduOrderServiceImpl implements EduOrderService {
     }
 
     @Override
-    @Transactional
     public Integer paySuccess(PayAsyncVo payAsyncVo) {
         HashMap<String, Object> hashMap = new HashMap<>();
 
@@ -88,6 +95,10 @@ public class EduOrderServiceImpl implements EduOrderService {
             String zfbNo = payAsyncVo.getTrade_no(); // 支付宝交易号
             String orderNo = payAsyncVo.getOut_trade_no(); // 订单号
             String patTime = payAsyncVo.getGmt_payment(); // 交易付款时间
+            String receipt_amount = payAsyncVo.getReceipt_amount(); // 商家实收金额
+            String pay_amount = payAsyncVo.getBuyer_pay_amount(); // 用户实际付款金额
+
+
             LocalDateTime time = LocalDateTimeUtils.string2parse(patTime, "yyyy-MM-dd HH:mm:ss");
 
             QueryWrapper<EduOrder> wrapper = new QueryWrapper<>();
@@ -101,6 +112,7 @@ public class EduOrderServiceImpl implements EduOrderService {
             hashMap.put("pay_time", time);
             hashMap.put("order_no", orderNo);
             hashMap.put("zfb_no", zfbNo);
+            hashMap.put("pay_money",pay_amount);
             int i = this.orderMapper.paySuccess(hashMap);
             if (i > 0) {
                 log.info("更新订单状态成功");
@@ -108,7 +120,8 @@ public class EduOrderServiceImpl implements EduOrderService {
                 String courseId = eduOrder.getCourseId();
                 String username = eduOrder.getUsername();
                 String amount = eduOrder.getTotalAmount().toString();// 订单金额
-                Boolean r = this.courseFeignClient.addUcourse(courseId, username);
+
+                Boolean r = this.courseFeign.addUn(courseId, username);
                 if (r) {
                     //更新用户积分
                     this.userFeignClient.updatePoints(username, amount);
