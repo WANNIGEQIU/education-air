@@ -4,6 +4,7 @@ import com.air.common.ResultCommon;
 import com.air.common.enums.ResultEnum;
 import com.air.common.vo.CourseVo;
 import com.air.server.course.entity.EduCourse;
+import com.air.server.course.entity.EduUcourse;
 import com.air.server.course.entity.dto.TwoSubjectDto;
 import com.air.server.course.entity.dto.VideoDto;
 import com.air.server.course.exception.CourseException;
@@ -11,7 +12,6 @@ import com.air.server.course.service.EduCategoryService;
 import com.air.server.course.service.EduCourseService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -139,19 +139,19 @@ public class WebCourseController {
      * @param username
      * @return
      */
-    @GetMapping("/mycourse/{username}")
-    public ResultCommon getMyCourse(@PathVariable String username) {
+    @GetMapping("/mycourse/{page}/{limit}/{username}")
+    public ResultCommon getMyCourse(
+            @PathVariable long page,
+            @PathVariable long limit,
+            @PathVariable String username) {
         if (StringUtils.isEmpty(username)) {
             throw new CourseException(ResultEnum.PARAM_ERROR);
         }
+        Page<EduUcourse> bean = new Page<>(page, limit);
+        Page myCourse = this.courseService.getMyCourse(bean, username);
 
-        List myCourse = this.courseService.getMyCourse(username);
+        return ResultCommon.resultOk(myCourse);
 
-        if (CollectionUtils.isEmpty(myCourse)) {
-            return ResultCommon.resultOk("你还没有购买的课程");
-        }else {
-            return ResultCommon.resultOk(myCourse);
-        }
 
     }
 

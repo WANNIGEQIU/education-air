@@ -56,4 +56,15 @@ public class UserFeignController {
 
     }
 
+    /**
+     * 更新用户头像
+     */
+    @PostMapping("/avatar/{path}/{username}")
+    public boolean upAvatar(@PathVariable("path") String path,
+                            @PathVariable("username") String username) {
+
+        boolean b = this.userService.upAvatar(path, username);
+        return b;
+    }
+
 }

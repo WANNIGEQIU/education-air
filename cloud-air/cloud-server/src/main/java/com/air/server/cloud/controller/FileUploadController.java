@@ -2,6 +2,7 @@ package com.air.server.cloud.controller;
 
 import com.air.common.ResultCommon;
 import com.air.common.util.LocalDateTimeUtils;
+import com.air.server.cloud.client.UserFeign;
 import com.air.server.cloud.config.ConstantProperties;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
@@ -13,6 +14,7 @@ import com.qcloud.cos.model.ObjectMetadata;
 import com.qcloud.cos.model.PutObjectResult;
 import com.qcloud.cos.region.Region;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +31,8 @@ import java.util.UUID;
 @RequestMapping("/Oss")
 public class FileUploadController {
 
-
+        @Autowired
+        private UserFeign userFeign;
     /**
      * 上传头像
      * 1 获取上传文件 MultiparFile
@@ -136,5 +139,43 @@ public class FileUploadController {
 
     }
 
+    /**
+     * 用户头像上传
+     */
+    @PostMapping("/avatar")
+    public ResultCommon upAvatar(@RequestParam("file") MultipartFile file,
+                                 @RequestParam("username") String username) {
+        System.out.println(username);
+        //获取文件上传名字
+        String filename = file.getOriginalFilename();
+        String uuid = UUID.randomUUID().toString();
+        filename = uuid + filename;
+        //获取时间
+        String time = LocalDateTimeUtils.formatOther("yyyy/MM/dd");
+        filename = time + "/user/" + filename;
+        System.out.println(filename);
+
+        try {
+            InputStream inputStream = file.getInputStream();
+            // 创建OSSClient实例。
+            OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
+            // InputStream inputStream = new FileInputStream("<yourlocalFile>");
+            com.aliyun.oss.model.ObjectMetadata metadata = new com.aliyun.oss.model.ObjectMetadata();
+            metadata.setContentType("image/jpg");
+            ossClient.putObject(yourBucketName, filename, inputStream,metadata);
+            // 关闭OSSClient。
+            ossClient.shutdown();
+            String path = ConstantProperties.ADDRESS+"/"+filename;
+            log.info("路径地址: [{}]",path);
+            //boolean b = this.userFeign.upAvatar(path, username);
+            return ResultCommon.resultOk(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return  ResultCommon.resultFail();
+
+        }
+
+
+    }
 
 }

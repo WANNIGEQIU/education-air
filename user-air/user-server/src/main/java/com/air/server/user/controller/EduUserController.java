@@ -186,6 +186,18 @@ public class EduUserController {
     }
 
 
+    /**
+     * 个人信息修改
+     */
+    @PostMapping("/updateUser")
+    public ResultCommon updateUser(@RequestBody UserDto dto){
+
+
+        boolean b = this.userService.updateUser(dto);
+        return ResultCommon.resultOk(b);
+
+    }
+
 
 
 }

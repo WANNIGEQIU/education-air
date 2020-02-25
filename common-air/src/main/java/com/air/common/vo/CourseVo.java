@@ -43,4 +43,7 @@ public class CourseVo {
 
     @ApiModelProperty(value = "视频状态 Draft未发布  Normal已发布")
     private String status;
+
+    @ApiModelProperty(value = "搜索课程")
+    private String search;
 }

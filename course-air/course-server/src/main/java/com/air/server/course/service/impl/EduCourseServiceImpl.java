@@ -78,6 +78,8 @@ public class EduCourseServiceImpl implements EduCourseService {
 
 
 
+
+
     @Override
     public List<CourseVo> selectCouse8Lid(String id) {
         List<CourseVo> courseVos = courseMapper.selectCourse8Lid(id);
@@ -237,6 +239,9 @@ public class EduCourseServiceImpl implements EduCourseService {
         if (!(StringUtils.isEmpty(bean.getCategoryPid()))) {
             wrapper.eq("category_pid",bean.getCategoryPid());
         }
+        if (!(StringUtils.isEmpty(bean.getSearch()))){
+            wrapper.like("title",bean.getSearch());
+        }
         Page<EduCourse> coursePage = courseMapper.selectPage(p, wrapper);
 
         return coursePage;
@@ -394,19 +399,12 @@ public class EduCourseServiceImpl implements EduCourseService {
     }
 
     @Override
-    public List getMyCourse(String username) {
-        List list = new ArrayList();
-        List<EduUcourse> myCourse1 = this.courseMapper.getMyCourse1(username);
-        QueryWrapper<EduCourse> wrapper = new QueryWrapper<>();
-        myCourse1.forEach(c->{
-            EduCourse eduCourse = this.courseMapper.selectById(c.getCourseId());
-            if (eduCourse != null) {
-                list.add(eduCourse);
-            }
-        });
+    public Page getMyCourse(Page page,String username) {
+
+        Page myCourse = this.courseMapper.selectMyCourse(page, username);
+        return myCourse;
 
 
-        return list;
     }
 
     @Override

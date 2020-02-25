@@ -20,6 +20,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -414,6 +415,39 @@ public class EduUserServiceImpl  implements EduUserService {
 
     }
 
+    @Override
+    public boolean updateUser(UserDto dto) {
+
+        EduUser eduUser = new EduUser();
+        if (isNotEmpty(dto.getId())) {
+            eduUser.setId(dto.getId());
+        }
+        if (isNotEmpty(dto.getMobile())) {
+            eduUser.setMobile(dto.getMobile());
+        }
+        if (isNotEmpty(dto.getAge())) {
+            eduUser.setAge(dto.getAge());
+        }
+        if (isNotEmpty(dto.getSex())) {
+            eduUser.setSex(dto.getSex());
+        }
+
+        int i = this.userMapper.updateById(eduUser);
+
+
+        return i> 0? true: false;
+    }
+
+    @Override
+    public boolean upAvatar(String path,String username) {
+        EduUser eduUser = new EduUser();
+        eduUser.setAvatar(path);
+        QueryWrapper<EduUser> wrapper = new QueryWrapper<>();
+        wrapper.eq("username",username);
+        int update = this.userMapper.update(eduUser, wrapper);
+        return update> 0? true: false;
+    }
+
 
     /*
     判断字符串是否为数字
@@ -425,4 +459,7 @@ public class EduUserServiceImpl  implements EduUserService {
 
 
 
+     public boolean isNotEmpty(@Nullable Object str) {
+        return !(StringUtils.isEmpty(str));
+     }
 }

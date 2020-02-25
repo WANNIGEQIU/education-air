@@ -38,6 +38,8 @@ public interface EduCourseMapper extends BaseMapper<EduCourse> {
     List<EduUcourse> getMyCourse1(String username);
 
     Integer queryCourse(String day);
+
+    Page<EduCourse> selectMyCourse(Page page, String username);
 }
 
 

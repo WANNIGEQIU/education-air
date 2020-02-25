@@ -146,4 +146,13 @@ FROM
 WHERE
 	DATE( edu_create ) = #{day}
 	</select>
+    <select id="selectMyCourse" resultType="com.air.server.course.entity.EduCourse">
+		     SELECT
+	c.*,u.username
+FROM
+	edu_ucourse u
+	LEFT JOIN edu_course c ON u.course_id = c.id
+WHERE
+	username = #{username}
+	</select>
 </mapper>

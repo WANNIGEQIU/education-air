@@ -51,4 +51,8 @@ public interface EduUserService  {
     Integer lossPassword1(UserDto dto);
 
     boolean lossPassword2(String s1 ,String s2,String s3);
+
+    boolean updateUser(UserDto dto);
+
+    boolean upAvatar(String path,String username);
 }

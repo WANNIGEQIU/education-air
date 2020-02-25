@@ -4,6 +4,7 @@ package com.air.api.user;
 import com.air.api.user.bean.UserBean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public interface UserApi {
@@ -34,4 +35,15 @@ public interface UserApi {
     @GetMapping("/user/points/{username}/{amount}")
     public boolean updatePoints(@PathVariable("username") String username,
                                 @PathVariable("amount") String amount);
+
+    /**
+     * 更新头像
+     * @param path
+     * @param username
+     * @return
+     */
+    @PostMapping("/avatar/{path}/{username}")
+     boolean upAvatar(
+             @PathVariable("path") String path,
+             @PathVariable("username") String username);
 }

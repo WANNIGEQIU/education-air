@@ -45,7 +45,7 @@ public class EduOrder implements Serializable {
     @ApiModelProperty(value = "下单用户")
     private String username;
 
-    @ApiModelProperty(value = "订单状态 0 未完成 1 已完成")
+    @ApiModelProperty(value = "订单状态 0 未完成 1 已完成 3 交易关闭")
     private Integer orderStatus;
 
     @ApiModelProperty(value = "支付状态 0 未支付 1 已支付")
