@@ -43,7 +43,7 @@
         <heimao.version>0.0.1-SNAPSHOT</heimao.version>
         <mybatis-plus.version>3.2.0</mybatis-plus.version>
         <generator.version>3.3.0</generator.version>
-        <swagger.version>2.7.0</swagger.version>
+        <swagger.version>2.10.0</swagger.version>
         <springcloud.version>Hoxton.RELEASE</springcloud.version>
         <velocity.version>2.1</velocity.version>
         <mybatis.version>2.1.1</mybatis.version>
